@@ -1,6 +1,9 @@
 package com.zoozer.service;
 
 import com.zoozer.domain.Girl;
+import com.zoozer.domain.Result;
+import com.zoozer.enums.ResultEnum;
+import com.zoozer.exception.GirlExcetion;
 import com.zoozer.repository.GirlRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -46,6 +49,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class GirlService {
     @Autowired
     private GirlRepository girlRepository;
+
     @Transactional
     public void insetTwo() {
         Girl girlA = new Girl();
@@ -63,13 +67,17 @@ public class GirlService {
     }
 
 
+    public Girl getAge(Integer id) throws Exception {
+        Girl one = girlRepository.findOne(id);
+        Integer age = one.getAge();
+        if (age < 10) {
+            throw new GirlExcetion(ResultEnum.PRIMARY_SCHOOL);
+        } else if (age > 10 && age < 16) {
+            throw new GirlExcetion(ResultEnum.MIDDLE_SCHOOL);
+        }
 
-
-
-
-
-
-
+        return one;
+    }
 
 
 }

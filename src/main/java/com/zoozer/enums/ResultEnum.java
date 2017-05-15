@@ -1,14 +1,4 @@
-package com.zoozer.aspect;
-
-import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
-
-import javax.servlet.http.HttpServletRequest;
+package com.zoozer.enums;
 
 /**
  * //                            _ooOoo_
@@ -46,61 +36,26 @@ import javax.servlet.http.HttpServletRequest;
  * @version 1.0
  * @created 2017/5/15 0015.
  */
-@Aspect
-@Component
-public class HttpAspect {
 
-    private final static Logger logger = LoggerFactory.getLogger(HttpAspect.class);
+public enum ResultEnum {
+    UNKNONW_ERROE(-1, "未知错误"),
+    SUCCESS(0, "成功"),
+    PRIMARY_SCHOOL(100, "我猜你可能还在上小学"),
+    MIDDLE_SCHOOL(101, "我猜你可能再上初中"),
+    ;
+    private Integer code;
+    private String msg;
 
-    @Pointcut("execution(public * com.zoozer.controller.GirlController.*(..))")
-    public void log() {
+    ResultEnum(Integer code, String msg) {
+        this.code = code;
+        this.msg = msg;
     }
 
-    @Before("log()")
-    public void doBefer(JoinPoint joinPoint) {
-
-        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        HttpServletRequest request = attributes.getRequest();
-        //url
-        logger.info("url={}",request.getRequestURI());
-
-        //mothod
-        logger.info("method={}", request.getMethod());
-
-        //ip
-        logger.info("ip={}", request.getRemoteAddr());
-
-        //类方法
-        logger.info("class_method={}", joinPoint.getSignature().getDeclaringTypeName()+"."+joinPoint.getSignature().getName());
-
-        //参数
-        logger.info("args={}",joinPoint.getArgs());
-
-
-
-
-    }
-    @After("log()")
-    public void doAfter() {
-        logger.info("22222222");
+    public Integer getCode() {
+        return code;
     }
 
-
-    @AfterReturning(returning = "object",pointcut = "log()")
-    public void doAfterReturning(Object object) {
-     //   logger.info("response={}",object.toString());
+    public String getMsg() {
+        return msg;
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
 }

@@ -1,14 +1,7 @@
-package com.zoozer.aspect;
+package com.zoozer.utils;
 
-import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
-
-import javax.servlet.http.HttpServletRequest;
+import com.zoozer.domain.Result;
+import com.zoozer.enums.ResultEnum;
 
 /**
  * //                            _ooOoo_
@@ -46,61 +39,24 @@ import javax.servlet.http.HttpServletRequest;
  * @version 1.0
  * @created 2017/5/15 0015.
  */
-@Aspect
-@Component
-public class HttpAspect {
 
-    private final static Logger logger = LoggerFactory.getLogger(HttpAspect.class);
-
-    @Pointcut("execution(public * com.zoozer.controller.GirlController.*(..))")
-    public void log() {
+public class ResultUtil {
+    public static Result success(Object object) {
+        Result result = new Result();
+        result.setCode(ResultEnum.SUCCESS.getCode());
+        result.setMsg(ResultEnum.SUCCESS.getMsg());
+        result.setData(object);
+        return result;
     }
 
-    @Before("log()")
-    public void doBefer(JoinPoint joinPoint) {
-
-        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        HttpServletRequest request = attributes.getRequest();
-        //url
-        logger.info("url={}",request.getRequestURI());
-
-        //mothod
-        logger.info("method={}", request.getMethod());
-
-        //ip
-        logger.info("ip={}", request.getRemoteAddr());
-
-        //类方法
-        logger.info("class_method={}", joinPoint.getSignature().getDeclaringTypeName()+"."+joinPoint.getSignature().getName());
-
-        //参数
-        logger.info("args={}",joinPoint.getArgs());
-
-
-
-
-    }
-    @After("log()")
-    public void doAfter() {
-        logger.info("22222222");
+    public static Result success() {
+        return success(null);
     }
 
-
-    @AfterReturning(returning = "object",pointcut = "log()")
-    public void doAfterReturning(Object object) {
-     //   logger.info("response={}",object.toString());
+    public static Result error(Integer code, String msg) {
+        Result result = new Result();
+        result.setCode(code);
+        result.setMsg(msg);
+        return result;
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
 }

@@ -1,14 +1,4 @@
-package com.zoozer.aspect;
-
-import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
-
-import javax.servlet.http.HttpServletRequest;
+package com.zoozer.domain;
 
 /**
  * //                            _ooOoo_
@@ -41,66 +31,47 @@ import javax.servlet.http.HttpServletRequest;
  * //                  奔驰宝马贵者趣，公交自行程序员。
  * //                  别人笑我忒疯癫，我笑自己命太贱；
  * //                  不见满街漂亮妹，哪个归得程序员？
- *
+ *  Http请求返回的最外层对象
  * @author czq
  * @version 1.0
  * @created 2017/5/15 0015.
  */
-@Aspect
-@Component
-public class HttpAspect {
 
-    private final static Logger logger = LoggerFactory.getLogger(HttpAspect.class);
+public class Result<T> {
+    /**
+     * 错误码
+     */
+    private Integer code;
+    /**
+     * 提示信息
+     */
+    private String msg;
+    /**
+     * 具体内容
+     */
+    private T data;
 
-    @Pointcut("execution(public * com.zoozer.controller.GirlController.*(..))")
-    public void log() {
+    public Integer getCode() {
+        return code;
     }
 
-    @Before("log()")
-    public void doBefer(JoinPoint joinPoint) {
-
-        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        HttpServletRequest request = attributes.getRequest();
-        //url
-        logger.info("url={}",request.getRequestURI());
-
-        //mothod
-        logger.info("method={}", request.getMethod());
-
-        //ip
-        logger.info("ip={}", request.getRemoteAddr());
-
-        //类方法
-        logger.info("class_method={}", joinPoint.getSignature().getDeclaringTypeName()+"."+joinPoint.getSignature().getName());
-
-        //参数
-        logger.info("args={}",joinPoint.getArgs());
-
-
-
-
-    }
-    @After("log()")
-    public void doAfter() {
-        logger.info("22222222");
+    public void setCode(Integer code) {
+        this.code = code;
     }
 
-
-    @AfterReturning(returning = "object",pointcut = "log()")
-    public void doAfterReturning(Object object) {
-     //   logger.info("response={}",object.toString());
+    public String getMsg() {
+        return msg;
     }
 
+    public void setMsg(String msg) {
+        this.msg = msg;
+    }
 
+    public T getData() {
+        return data;
+    }
 
-
-
-
-
-
-
-
-
-
-
+    public void setData(T data) {
+        this.data = data;
+    }
 }

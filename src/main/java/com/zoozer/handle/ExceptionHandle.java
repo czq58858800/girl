@@ -1,14 +1,13 @@
-package com.zoozer.aspect;
+package com.zoozer.handle;
 
-import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.*;
+import com.zoozer.domain.Result;
+import com.zoozer.exception.GirlExcetion;
+import com.zoozer.utils.ResultUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
-
-import javax.servlet.http.HttpServletRequest;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * //                            _ooOoo_
@@ -41,66 +40,25 @@ import javax.servlet.http.HttpServletRequest;
  * //                  奔驰宝马贵者趣，公交自行程序员。
  * //                  别人笑我忒疯癫，我笑自己命太贱；
  * //                  不见满街漂亮妹，哪个归得程序员？
- *
+ *  自定义 捕获异常
  * @author czq
  * @version 1.0
  * @created 2017/5/15 0015.
  */
-@Aspect
-@Component
-public class HttpAspect {
+@ControllerAdvice
+public class ExceptionHandle {
 
-    private final static Logger logger = LoggerFactory.getLogger(HttpAspect.class);
+    private static Logger logger = LoggerFactory.getLogger(ExceptionHandle.class);
 
-    @Pointcut("execution(public * com.zoozer.controller.GirlController.*(..))")
-    public void log() {
+    @ExceptionHandler(value = Exception.class)
+    @ResponseBody
+    public Result handle(Exception e) {
+        if (e instanceof GirlExcetion) {
+            GirlExcetion girlExcetion = (GirlExcetion) e;
+            return ResultUtil.error(girlExcetion.getCode(), girlExcetion.getMessage());
+        }else {
+            logger.error("【系统异常】={}",e);
+            return ResultUtil.error(-1,"未知错误");
+        }
     }
-
-    @Before("log()")
-    public void doBefer(JoinPoint joinPoint) {
-
-        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        HttpServletRequest request = attributes.getRequest();
-        //url
-        logger.info("url={}",request.getRequestURI());
-
-        //mothod
-        logger.info("method={}", request.getMethod());
-
-        //ip
-        logger.info("ip={}", request.getRemoteAddr());
-
-        //类方法
-        logger.info("class_method={}", joinPoint.getSignature().getDeclaringTypeName()+"."+joinPoint.getSignature().getName());
-
-        //参数
-        logger.info("args={}",joinPoint.getArgs());
-
-
-
-
-    }
-    @After("log()")
-    public void doAfter() {
-        logger.info("22222222");
-    }
-
-
-    @AfterReturning(returning = "object",pointcut = "log()")
-    public void doAfterReturning(Object object) {
-     //   logger.info("response={}",object.toString());
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
